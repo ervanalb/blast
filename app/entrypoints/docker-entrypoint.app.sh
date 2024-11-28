@@ -36,7 +36,7 @@ fi
 
 ## Initialize Django database and static files
 ##
-bash entrypoints/wait-for-it.sh ${DATABASE_HOST}:${DATABASE_PORT} --timeout=0
+#bash entrypoints/wait-for-it.sh ${DATABASE_HOST}:${DATABASE_PORT} --timeout=0
 
 if [[ -f "${INIT_STARTED_DB}" ]]
 then

@@ -103,7 +103,7 @@ celerybeat.pid
 
 # Environments
 .env*
-!.env.default
+!.env*.template
 !.env.ci
 .venv
 #env/
@@ -172,3 +172,10 @@ validation/validation_data/jones+18_panstarrs_g_cutouts/
 app/sbi-logs/
 
 .vscode/
+
+/app/static/
+/app/data/
+/miniconda3/
+/blast_data/
+/blast_data_2/
+/blast_db.sqlite

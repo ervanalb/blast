@@ -40,27 +40,27 @@ tasks_in_order = [
     "Global host SED inference",
     "Local host SED inference",
 ]
-tasks_classes_in_order = [
-    host.transient_tasks.MWEBV_Transient(),
-    host.transient_tasks.Ghost(),
-    host.transient_tasks.MWEBV_Host(),
-    host.transient_tasks.ImageDownload(),
-    host.transient_tasks.HostInformation(),
-    host.transient_tasks.TransientInformation(),
-    host.transient_tasks.GlobalApertureConstruction(),
-    host.transient_tasks.GlobalAperturePhotometry(),
-    host.transient_tasks.ValidateGlobalPhotometry(),
-    host.transient_tasks.LocalAperturePhotometry(),
-    host.transient_tasks.ValidateLocalPhotometry(),
-    host.transient_tasks.GlobalHostSEDFitting(),
-    host.transient_tasks.LocalHostSEDFitting(),
-]
+tasks_classes_in_order = [cl(transient_name) for cl in [
+    host.transient_tasks.MWEBV_Transient,
+    host.transient_tasks.Ghost,
+    host.transient_tasks.MWEBV_Host,
+    host.transient_tasks.ImageDownload,
+    host.transient_tasks.HostInformation,
+    host.transient_tasks.TransientInformation,
+    host.transient_tasks.GlobalApertureConstruction,
+    host.transient_tasks.GlobalAperturePhotometry,
+    host.transient_tasks.ValidateGlobalPhotometry,
+    host.transient_tasks.LocalAperturePhotometry,
+    host.transient_tasks.ValidateLocalPhotometry,
+    host.transient_tasks.GlobalHostSEDFitting,
+    host.transient_tasks.LocalHostSEDFitting,
+]]
 
 tasks_sed = [
     "Global host SED inference",
 ]
 tasks_sed_classes = [
-    host.transient_tasks.GlobalHostSEDFitting(),
+    host.transient_tasks.GlobalHostSEDFitting(transient_name),
 ]
 
 
@@ -87,9 +87,11 @@ class run_single(CronJobBase):
             transient = transients[0]
 
         for to, tc in zip(tasks_in_order, tasks_classes_in_order):
-            for t in tasks.periodic_tasks:
-                if t.task_name == to:
-                    task = Task.objects.get(name__exact=t.task_name)
+            print("Running:", to)
+            #for t in tasks.periodic_tasks:
+            #    if t.task_name == to:
+            if True:
+                    task = Task.objects.get(name__exact=to)
                     task_register = TaskRegister.objects.all()
                     task_register = task_register.filter(transient=transient, task=task)
 
@@ -107,7 +109,7 @@ class run_single(CronJobBase):
                     # if task_register.status.message != 'processed':
                     task_register.status = Status.objects.get(message="not processed")
                     try:
-                        status = t.run_process(task_register)
+                        status = tc.run_process(task_register)
                     except Exception as e:
                         print(e)
                         # import pdb; pdb.set_trace()
@@ -116,7 +118,7 @@ class run_single(CronJobBase):
                         # task_register.save()
                         raise e
 
-                    break
+            #        break
 
 
 class run_single_sed(CronJobBase):
@@ -142,8 +144,8 @@ class run_single_sed(CronJobBase):
             transient = transients[0]
 
         for to, tc in zip(tasks_sed, tasks_sed_classes):
-            for t in tasks.periodic_tasks:
-                if t.task_name == to:
+            #for t in tasks.periodic_tasks:
+            #    if t.task_name == to:
                     task = Task.objects.get(name__exact=t.task_name)
                     task_register = TaskRegister.objects.all()
                     task_register = task_register.filter(transient=transient, task=task)
@@ -171,4 +173,4 @@ class run_single_sed(CronJobBase):
                         # task_register.save()
                         raise e
 
-                    break
+            #        break

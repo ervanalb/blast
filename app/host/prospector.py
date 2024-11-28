@@ -11,7 +11,7 @@ import prospect.io.read_results as reader
 from astropy.cosmology import WMAP9 as cosmo
 from django.conf import settings
 from django.db.models import Q
-from django.db.utils import ProgrammingError
+from django.db.utils import ProgrammingError, OperationalError
 from host import postprocess_prosp as pp
 from prospect.fitting import fit_model as fit_model_prospect
 from prospect.fitting import lnprobfn
@@ -39,7 +39,7 @@ from .photometric_calibration import mJy_to_maggies  ##jansky_to_maggies
 try:
     all_filters = [filt for filt in Filter.objects.all().select_related()]
     trans_curves = [f.transmission_curve() for f in all_filters]
-except ProgrammingError:
+except (ProgrammingError, OperationalError):
     pass
 
 
